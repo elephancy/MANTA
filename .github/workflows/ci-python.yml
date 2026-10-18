@@ -24,6 +24,9 @@ jobs:
       - name: Legacy naming guard
         run: python tools/check_legacy_naming.py
 
+      - name: Verify private deployment boundary
+        run: python tools/check_deployment_boundary.py
+
       - name: Python syntax checks
         run: |
           python -m py_compile \
