@@ -13,7 +13,7 @@ dependencies = [
 
 [project.optional-dependencies]
 tflite = [
-  "tensorflow-cpu==2.18.0"
+  "tensorflow-cpu==2.21.0"
 ]
 test = [
   "pytest==8.3.4"
