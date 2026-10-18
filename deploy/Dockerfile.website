@@ -1,4 +1,4 @@
-FROM node:22-alpine AS build
+FROM node:26-alpine AS build
 
 WORKDIR /app
 COPY website/package.json website/package-lock.json ./
@@ -7,7 +7,7 @@ COPY website ./
 COPY main.pdf ./public/manta-thesis.pdf
 RUN npm run build
 
-FROM node:22-alpine AS runtime
+FROM node:26-alpine AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
 COPY --chown=node:node --from=build /app/public ./public
