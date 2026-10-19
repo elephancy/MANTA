@@ -63,7 +63,7 @@ jobs:
         run: |
           cd backend-adapter
           python -m pip install --upgrade pip
-          pip install -e .[test] pip-audit==2.10.1
+          pip install -e .[test,audit]
 
       - name: Audit backend runtime and test dependencies
         run: |
@@ -95,7 +95,7 @@ jobs:
         run: |
           cd ml-pipeline
           python -m pip install --upgrade pip
-          pip install -e .[test] pip-audit==2.10.1
+          pip install -e .[test,audit]
 
       - name: Audit ML runtime and test dependencies
         run: |
