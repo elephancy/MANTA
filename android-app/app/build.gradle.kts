@@ -92,7 +92,7 @@ dependencies {
     ksp("androidx.room:room-compiler:2.8.5")
 
     implementation("androidx.work:work-runtime-ktx:2.12.0")
-    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    implementation("androidx.security:security-crypto:1.1.0")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.11.0")
