@@ -66,7 +66,9 @@ jobs:
           pip install -e .[test] pip-audit==2.10.1
 
       - name: Audit backend runtime and test dependencies
-        run: python -m pip_audit --strict --skip-editable --vulnerability-service osv
+        run: |
+          python -m pip list --format=freeze --exclude-editable > "$RUNNER_TEMP/audit-requirements.txt"
+          python -m pip_audit --strict --disable-pip --no-deps --vulnerability-service osv -r "$RUNNER_TEMP/audit-requirements.txt"
 
       - name: Run backend tests
         run: |
@@ -96,7 +98,9 @@ jobs:
           pip install -e .[test] pip-audit==2.10.1
 
       - name: Audit ML runtime and test dependencies
-        run: python -m pip_audit --strict --skip-editable --vulnerability-service osv
+        run: |
+          python -m pip list --format=freeze --exclude-editable > "$RUNNER_TEMP/audit-requirements.txt"
+          python -m pip_audit --strict --disable-pip --no-deps --vulnerability-service osv -r "$RUNNER_TEMP/audit-requirements.txt"
 
       - name: Run ML tests
         run: |
