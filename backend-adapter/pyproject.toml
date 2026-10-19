@@ -17,7 +17,7 @@ dependencies = [
 [project.optional-dependencies]
 test = [
   "pytest==9.0.3",
-  "pytest-cov==6.0.0",
+  "pytest-cov==7.1.0",
 ]
 audit = [
   "pip-audit==2.10.1",
