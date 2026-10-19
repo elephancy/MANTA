@@ -63,7 +63,12 @@ jobs:
         run: |
           cd backend-adapter
           python -m pip install --upgrade pip
-          pip install -e .[test]
+          pip install -e .[test] pip-audit==2.10.1
+
+      - name: Audit backend runtime and test dependencies
+        run: |
+          python -m pip list --format=freeze --exclude-editable > "$RUNNER_TEMP/audit-requirements.txt"
+          python -m pip_audit --strict --disable-pip --no-deps --vulnerability-service osv -r "$RUNNER_TEMP/audit-requirements.txt"
 
       - name: Run backend tests
         run: |
@@ -90,7 +95,12 @@ jobs:
         run: |
           cd ml-pipeline
           python -m pip install --upgrade pip
-          pip install -e .[test]
+          pip install -e .[test] pip-audit==2.10.1
+
+      - name: Audit ML runtime and test dependencies
+        run: |
+          python -m pip list --format=freeze --exclude-editable > "$RUNNER_TEMP/audit-requirements.txt"
+          python -m pip_audit --strict --disable-pip --no-deps --vulnerability-service osv -r "$RUNNER_TEMP/audit-requirements.txt"
 
       - name: Run ML tests
         run: |
@@ -119,8 +129,11 @@ jobs:
       - name: Install exact website dependencies
         run: npm ci
 
-      - name: Audit production dependencies
-        run: npm audit --omit=dev --audit-level=high
+      - name: Audit runtime and development dependencies
+        run: npm audit --audit-level=high
+
+      - name: Check website types
+        run: npm run typecheck
 
       - name: Build release website
         run: npm run build
