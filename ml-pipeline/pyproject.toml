@@ -5,7 +5,7 @@ description = "Feature engineering, anomaly training, and evaluation for Android
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "numpy==1.26.4",
+  "numpy==2.4.6",
   "pandas==2.2.3",
   "scikit-learn==1.9.1",
   "joblib==1.6.0",
