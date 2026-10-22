@@ -6,6 +6,8 @@ import time
 import urllib.request
 from pathlib import Path
 
+from http_client import open_http
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Replay exported MANTA events against a backend and record soak results")
@@ -28,7 +30,7 @@ def send_event(base_url: str, token: str, payload: dict) -> int:
         },
         method="POST",
     )
-    with urllib.request.urlopen(request, timeout=20) as response:
+    with open_http(request, timeout=20) as response:
         return response.getcode()
 
 

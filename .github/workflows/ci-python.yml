@@ -44,6 +44,8 @@ jobs:
             tools/check_legacy_naming.py
 
   backend-tests:
+    permissions:
+      contents: read
     name: Backend adapter tests
     runs-on: ubuntu-latest
     steps:
@@ -73,7 +75,24 @@ jobs:
       - name: Run backend tests
         run: |
           cd backend-adapter
-          pytest -q tests
+          pytest -q tests --cov=app --cov-branch --cov-report=term-missing --cov-report=xml:coverage.xml
+      - name: Preserve manta-backend coverage
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: coverage-manta-backend
+          path: backend-adapter/coverage.xml
+          if-no-files-found: error
+          retention-days: 7
+      - name: Upload manta-backend coverage to Codecov
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.CODECOV_UPLOAD_ENABLED == 'true'
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          use_oidc: false
+          files: ./backend-adapter/coverage.xml
+          disable_search: true
+          fail_ci_if_error: true
+          version: v11.3.1
+          cleanup: true
 
   ml-tests:
     name: MANTA ML pipeline tests

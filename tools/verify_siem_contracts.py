@@ -5,6 +5,8 @@ import json
 import urllib.request
 from pathlib import Path
 
+from http_client import open_http
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Verify MANTA backend/SIEM contract surfaces against a live backend")
@@ -19,7 +21,7 @@ def fetch_json(url: str, token: str, path: str) -> dict:
         f"{url.rstrip('/')}{path}",
         headers={"Authorization": f"Bearer {token}"} if token else {},
     )
-    with urllib.request.urlopen(request, timeout=20) as response:
+    with open_http(request, timeout=20) as response:
         return json.loads(response.read().decode("utf-8"))
 
 

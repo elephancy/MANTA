@@ -3,9 +3,11 @@ from __future__ import annotations
 import argparse
 import fnmatch
 import json
+import shutil
 import sys
 import urllib.request
 from pathlib import Path
+from urllib.parse import urlsplit
 
 
 DATASETS = {
@@ -82,10 +84,35 @@ def list_datasets() -> None:
         print(f"  notes: {meta['notes']}")
 
 
+def checked_dataset_url(url: str) -> str:
+    parts = urlsplit(url)
+    if (
+        parts.scheme != "https"
+        or parts.hostname not in {"codeload.github.com", "zenodo.org"}
+        or parts.username is not None
+        or parts.password is not None
+        or parts.port not in {None, 443}
+        or parts.fragment
+    ):
+        raise ValueError("Dataset URL must use an approved HTTPS dataset host")
+    return url
+
+
+class DatasetRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        checked_dataset_url(newurl)
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def open_dataset(url: str):
+    opener = urllib.request.build_opener(DatasetRedirectHandler())
+    return opener.open(checked_dataset_url(url), timeout=60)
+
+
 def _download(url: str, target: Path) -> None:
     target.parent.mkdir(parents=True, exist_ok=True)
-    with urllib.request.urlopen(url) as response, target.open("wb") as handle:
-        handle.write(response.read())
+    with open_dataset(url) as response, target.open("wb") as handle:
+        shutil.copyfileobj(response, handle)
 
 
 def download_direct(dataset: dict, output_dir: Path) -> list[Path]:
@@ -96,7 +123,9 @@ def download_direct(dataset: dict, output_dir: Path) -> list[Path]:
 
 def download_zenodo_record(dataset: dict, output_dir: Path, match: str) -> list[Path]:
     record_id = dataset["record_id"]
-    with urllib.request.urlopen(f"https://zenodo.org/api/records/{record_id}") as response:
+    if not str(record_id).isdigit():
+        raise ValueError("Zenodo record ID must be numeric")
+    with open_dataset(f"https://zenodo.org/api/records/{record_id}") as response:
         payload = json.loads(response.read().decode("utf-8"))
     files = payload.get("files") or []
     downloaded: list[Path] = []
@@ -111,6 +140,8 @@ def download_zenodo_record(dataset: dict, output_dir: Path, match: str) -> list[
         )
         if not url:
             continue
+        if key in {".", ".."} or any(char in key for char in ("/", "\\", ":")):
+            raise ValueError("Dataset filename must be a plain filename")
         target = output_dir / key
         _download(str(url), target)
         downloaded.append(target)
