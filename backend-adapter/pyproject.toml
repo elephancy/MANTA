@@ -5,18 +5,18 @@ description = "Secure mobile flow ingest adapter for Wazuh/SIEM forwarding"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-  "fastapi==0.147.0",
+  "fastapi==0.150.0",
   "starlette==1.9.0",
-  "uvicorn[standard]==0.32.1",
+  "uvicorn[standard]==0.54.0",
   "httpx==0.28.1",
-  "pydantic==2.10.5",
-  "numpy==2.2.1",
-  "scikit-learn==1.6.0",
+  "pydantic==2.14.1",
+  "numpy==2.4.6",
+  "scikit-learn==1.9.1",
 ]
 
 [project.optional-dependencies]
 test = [
-  "pytest==9.0.3",
+  "pytest==9.1.1",
   "pytest-cov==6.0.0",
 ]
 audit = [
