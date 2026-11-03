@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { MantaPhone } from "./components/MantaPhone";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "https://bachelor.elfeel.me/" },
+};
 
 const metrics = [
   ["6.03M", "public-corpus flows processed"],
@@ -69,6 +74,7 @@ export default function HomePage() {
         </div>
 
         <div className="hero-device">
+          <h2 className="visually-hidden">MANTA app preview</h2>
           <div className="hero-device-note note-top">Real app structure</div>
           <MantaPhone autoPlay compact />
           <div className="hero-device-note note-bottom">No payload inspection</div>
