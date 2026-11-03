@@ -332,7 +332,7 @@ export function MantaPhone({ compact = false, state: controlledState, onStateCha
           <strong>MANTA</strong>
           <span>{screenSubtitle(state)}</span>
         </div>
-        <b className={state.protectionActive ? "online-dot" : "paused-dot"} aria-label={state.protectionActive ? "Protection active" : "Protection paused"} />
+        <b className={state.protectionActive ? "online-dot" : "paused-dot"} role="img" aria-label={state.protectionActive ? "Protection active" : "Protection paused"} />
       </div>
 
       <div className="phone-viewport" aria-live="polite">

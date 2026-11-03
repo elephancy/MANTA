@@ -149,6 +149,7 @@ export default function DemoPage() {
 
       <section className="demo-workbench container">
         <div className="demo-phone-stage">
+          <h2 className="visually-hidden">Interactive MANTA app</h2>
           <div className="stage-label">
             <span>Android endpoint</span>
             <b>Interactive</b>
