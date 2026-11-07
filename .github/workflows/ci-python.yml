@@ -156,3 +156,22 @@ jobs:
 
       - name: Build release website
         run: npm run build
+
+      - name: Verify public crawl routes
+        run: |
+          set -euo pipefail
+          PORT=3000 HOSTNAME=127.0.0.1 node .next/standalone/server.js > /tmp/manta-web.log 2>&1 &
+          web_pid=$!
+          trap 'kill "$web_pid" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3000/robots.txt > /tmp/manta-robots.txt; then break; fi
+            sleep 1
+          done
+          grep -q 'Sitemap: https://bachelor.elfeel.me/sitemap.xml' /tmp/manta-robots.txt
+          curl -fsS http://127.0.0.1:3000/sitemap.xml > /tmp/manta-sitemap.xml
+          python - <<'PY'
+          import xml.etree.ElementTree as ET
+          root = ET.parse('/tmp/manta-sitemap.xml').getroot()
+          urls = [item.text for item in root.findall('{http://www.sitemaps.org/schemas/sitemap/0.9}url/{http://www.sitemaps.org/schemas/sitemap/0.9}loc')]
+          assert urls == ['https://bachelor.elfeel.me/', 'https://bachelor.elfeel.me/demo'], urls
+          PY
